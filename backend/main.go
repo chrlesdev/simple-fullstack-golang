@@ -22,8 +22,9 @@ type User struct {
 
 func main() {
 	// database connection
-	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
-
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"),
+)
+	// IF ERROR	 log the error and close the connection to DB
 	if err != nil{
 		log.Fatal(err)
 	}
@@ -156,14 +157,41 @@ func updateUser(db *sql.DB) http.HandlerFunc {
 			log.Fatal(err)
 		}
 
+
+		// Retrieve the updated user data from the database
 		var updatedUser User 
 		err = db.QueryRow("SELECT id, name, email FROM users where id = $1 ", id).Scan(&updatedUser.Id, &updatedUser.Name, &updatedUser.Email)
 		if err != nil {
 			log.Fatal(err)
 		}
 
+
+		// send the updated user data in the response
 		json.NewEncoder(w).Encode(updatedUser)
-
-
 	}
+}
+
+// delete user
+func deleteUser (db *sql.DB) http.HandlerFunc{
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		id:= vars["id"]
+
+		var u User
+		err := db.QueryRow("SELECT * FROM users WHERE id = $1", id).Scan(&u.Id, &u.Name, &u.Email)
+		if err !=  nil {
+			w.WriteHeader(http.StatusNotFound)
+			return 
+		}else {
+			_, err := db.Exec("DELETE FROM users WHERE id = $1", id)
+			if err != nil {
+				// todo : fix error handling
+				w.WriteHeader(http.StatusNotFound)
+				return  
+			}
+
+			json.NewEncoder(w).Encode("user deleted")
+		}
+	}
+
 }
