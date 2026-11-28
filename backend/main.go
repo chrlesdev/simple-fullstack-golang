@@ -42,11 +42,11 @@ func main() {
 
 	// create router
 	router := mux.NewRouter()
-	router.HandleFunc("api/go/users", getUsers(db)).Methods("GET")
-	router.HandleFunc("/api/go/users", createUser(db)).Methods("POST")
-	router.HandleFunc("/api/go/users/{id}", getUser(db)).Methods("GET")
-	router.HandleFunc("/api/go/users", updateUser(db)).Methods("PUT")
-	router.HandleFunc("/api/go/users", deleteUser(db)).Methods("DELETE")
+	router.HandleFunc("/api/go/users", getUsers(db)).Methods("GET")
+	router.HandleFunc("/api/go/create/user", createUser(db)).Methods("POST")
+	router.HandleFunc("/api/go/user/{id}", getUser(db)).Methods("GET")
+	router.HandleFunc("/api/go/user/update/{id}", updateUser(db)).Methods("PUT")
+	router.HandleFunc("/api/go/delete/user", deleteUser(db)).Methods("DELETE")
 
 	enhanceRouter := enableCORS(jsonContentTypeMiddleware(router))
 
