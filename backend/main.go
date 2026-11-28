@@ -33,7 +33,7 @@ func main() {
 
 
 	//Create table
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS user (id SERIAL PRIMARY KEY, name TEXT, email TEXT)")
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT, email TEXT)")
 	
 	if err != nil {
 		log.Fatal(err)
